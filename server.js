@@ -6,6 +6,8 @@ const db_config = require("./configs/db.config");
 const user_model = require("./models/user.model");
 const bcrypt = require("bcryptjs");
 
+//middleware to convert json request to js object
+app.use(express.json());
 // Connection with db
 mongoose.connect(db_config.db_url);
 // ordering to connect
@@ -27,6 +29,7 @@ async function init() {
     let user = await user_model.findOne({ userId: "admin" });
     if (user) {
       console.log("Admin already Present");
+      return;
     }
   } catch (err) {
     console.log("Error while reading the data", err);
@@ -44,6 +47,10 @@ async function init() {
     console.log("Error while creating admin", err);
   }
 }
+
+// stich the auth route to server
+
+require("./routes/auth.routes")(app);
 app.listen(server_config.PORT, () => {
   console.log("Server startd at ", server_config.PORT);
 });
